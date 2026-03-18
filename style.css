@@ -57,6 +57,12 @@ body {
   text-align: center;
   margin-bottom: 40px;
 }
+.logo {
+  display: block;
+  margin: 0 auto 20px;
+  height: 60px;
+  width: auto;
+}
 
 .header-tag {
   display: inline-block;
