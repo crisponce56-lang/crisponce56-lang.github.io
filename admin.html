@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Moderador — Cresio</title>
+  <link rel="stylesheet" href="admin-style.css" />
+</head>
+<body>
+
+  <!-- ── Login ── -->
+  <div id="login-screen">
+    <div class="login-box">
+      <div class="login-logo-wrap">
+        <img src="LogoCresioPng.png" alt="Cresio" class="login-logo" />
+      </div>
+      <h2>Panel del moderador</h2>
+      <p>Ingresa la contraseña para ver las entradas del taller.</p>
+      <input type="password" id="pwd-input" placeholder="Contraseña"
+             onkeydown="if(event.key==='Enter') checkPwd()" />
+      <button onclick="checkPwd()">Entrar</button>
+      <div id="pwd-error" class="pwd-error hidden">Contraseña incorrecta.</div>
+    </div>
+  </div>
+
+  <!-- ── Panel principal ── -->
+  <div id="main-panel" class="hidden">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <img src="LogoCresioPng.png" alt="Cresio" class="topbar-logo" />
+        <h1>Panel del taller</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="stats">
+          <span id="stat-total">0 entradas</span>
+          <span class="stat-sep">·</span>
+          <span id="stat-ref">0 reflexiones</span>
+          <span class="stat-sep">·</span>
+          <span id="stat-foto">0 fotos</span>
+        </div>
+        <button class="refresh-btn" onclick="cargarEntradas()">↻ Actualizar</button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filtrar('todos', this)">Todos</button>
+      <button class="filter-btn" onclick="filtrar('reflexion', this)">Reflexiones</button>
+      <button class="filter-btn" onclick="filtrar('foto', this)">Fotos</button>
+    </div>
+
+    <div id="cards-container">
+      <div class="loading">Cargando entradas…</div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { initializeApp }                                   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ──────────────────────────────────────────────────────────────
+    // PASO 3: Reemplaza estos valores con los de tu proyecto Firebase
+    // ──────────────────────────────────────────────────────────────
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBh8u86uwbcEzfdqJoGxEbcLrfGJUs0L70",
+    authDomain: "taller-cresio-liderazgo2.firebaseapp.com",
+    projectId: "taller-cresio-liderazgo2",
+    storageBucket: "taller-cresio-liderazgo2.firebasestorage.app",
+    messagingSenderId: "1008979829978",
+    appId: "1:1008979829978:web:37568296a81923702631e3"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
+    // ──────────────────────────────────────────────────────────────
+
+    // ──────────────────────────────────────────────────────────────
+    // PASO 4: Cambia esta contraseña por la que tú elijas
+    // ──────────────────────────────────────────────────────────────
+    const ADMIN_PASSWORD = "taller2026";
+    // ──────────────────────────────────────────────────────────────
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    let todasLasEntradas = [];
+    let filtroActual     = 'todos';
+
+    window.checkPwd = function() {
+      const val = document.getElementById('pwd-input').value;
+      if (val === ADMIN_PASSWORD) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('main-panel').classList.remove('hidden');
+        cargarEntradas();
+      } else {
+        document.getElementById('pwd-error').classList.remove('hidden');
+      }
+    };
+
+    window.cargarEntradas = async function() {
+      document.getElementById('cards-container').innerHTML = '<div class="loading">Cargando entradas…</div>';
+      try {
+        const q    = query(collection(db, 'entradas'), orderBy('timestamp', 'desc'));
+        const snap = await getDocs(q);
+        todasLasEntradas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        actualizarStats();
+        renderCards(filtroActual);
+      } catch (err) {
+        document.getElementById('cards-container').innerHTML =
+          '<div class="loading">Error al cargar. Revisa la configuración de Firebase.</div>';
+        console.error(err);
+      }
+    };
+
+    function actualizarStats() {
+      const refs  = todasLasEntradas.filter(e => e.tipo === 'reflexion').length;
+      const fotos = todasLasEntradas.filter(e => e.tipo === 'foto').length;
+      document.getElementById('stat-total').textContent = `${todasLasEntradas.length} entradas`;
+      document.getElementById('stat-ref').textContent   = `${refs} reflexiones`;
+      document.getElementById('stat-foto').textContent  = `${fotos} fotos`;
+    }
+
+    window.filtrar = function(tipo, btn) {
+      filtroActual = tipo;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCards(tipo);
+    };
+
+    function renderCards(tipo) {
+      const container = document.getElementById('cards-container');
+      const lista     = tipo === 'todos'
+        ? todasLasEntradas
+        : todasLasEntradas.filter(e => e.tipo === tipo);
+
+      if (lista.length === 0) {
+        container.innerHTML = '<div class="empty">No hay entradas aún.</div>';
+        return;
+      }
+
+      container.innerHTML = lista.map((e, i) => {
+        const fecha = e.timestamp?.toDate
+          ? e.timestamp.toDate().toLocaleString('es-EC', { dateStyle: 'short', timeStyle: 'short' })
+          : '—';
+
+        if (e.tipo === 'reflexion') {
+          return `
+            <div class="card card-ref" style="animation-delay:${i * 40}ms">
+              <div class="card-top">
+                <span class="card-badge badge-ref">✍️ Reflexión</span>
+                <span class="card-date">${fecha}</span>
+              </div>
+              <div class="card-nombre">${e.nombre || 'Anónimo'}</div>
+              <div class="card-texto">${escapeHtml(e.texto)}</div>
+              <button class="dl-btn"
+                onclick="descargarTexto('${escapeAttr(e.texto)}','${escapeAttr(e.nombre)}','${fecha}')">
+                ⬇ Descargar texto
+              </button>
+            </div>`;
+        } else {
+          return `
+            <div class="card card-foto" style="animation-delay:${i * 40}ms">
+              <div class="card-top">
+                <span class="card-badge badge-foto">📷 Foto</span>
+                <span class="card-date">${fecha}</span>
+              </div>
+              <div class="card-nombre">${e.nombre || 'Anónimo'}</div>
+              <img src="${e.fotoUrl}" alt="Foto del taller" class="card-img" loading="lazy" />
+              ${e.comentario ? `<div class="card-texto">${escapeHtml(e.comentario)}</div>` : ''}
+              <a class="dl-btn" href="${e.fotoUrl}" download target="_blank" rel="noopener">
+                ⬇ Descargar foto
+              </a>
+            </div>`;
+        }
+      }).join('');
+    }
+
+    window.descargarTexto = function(texto, nombre, fecha) {
+      const contenido = `Taller de Negociación Colaborativa — Cresio\n\nParticipante: ${nombre}\nFecha: ${fecha}\n\n${texto}`;
+      const blob = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+      const a    = document.createElement('a');
+      a.href     = URL.createObjectURL(blob);
+      a.download = `reflexion_${nombre}_${Date.now()}.txt`;
+      a.click();
+    };
+
+    function escapeHtml(str = '') {
+      return str
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function escapeAttr(str = '') {
+      return str.replace(/'/g, '&#39;').replace(/\n/g, ' ');
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis apuntes del taller — Cresio</title>
+  <link rel="stylesheet" href="apuntes-style.css" />
+</head>
+<body>
+
+  <div class="wrap">
+
+    <div class="header">
+      <div class="logo-wrap">
+        <img src="LogoCresioPng.png" alt="Cresio" class="logo" />
+      </div>
+      <div class="header-tag">Taller colaborativo</div>
+      <h1>Captura tu momento</h1>
+      <p>¿Algo te pareció importante? Guárdalo aquí antes de que se pierda.</p>
+    </div>
+
+    <!-- Selector de tipo -->
+    <div class="type-selector">
+      <button class="type-btn active" id="btn-reflexion" onclick="selectType('reflexion')">
+        <span class="type-icon">✍️</span>
+        <span>Reflexión o apunte</span>
+      </button>
+      <button class="type-btn" id="btn-foto" onclick="selectType('foto')">
+        <span class="type-icon">📷</span>
+        <span>Fotografía</span>
+      </button>
+    </div>
+
+    <!-- Formulario reflexión -->
+    <div id="form-reflexion" class="form-section">
+      <div class="field">
+        <label>Tu nombre <span class="optional">(opcional)</span></label>
+        <input type="text" id="ref-nombre" placeholder="Ej: María, Equipo 3…" />
+      </div>
+      <div class="field">
+        <label>Tu reflexión o apunte</label>
+        <textarea id="ref-texto" placeholder="Escribe aquí lo que quieres recordar…" rows="5"></textarea>
+      </div>
+      <button class="send-btn" onclick="enviarReflexion()">
+        <span id="ref-btn-text">Guardar reflexión</span>
+      </button>
+    </div>
+
+    <!-- Formulario foto -->
+    <div id="form-foto" class="form-section hidden">
+      <div class="field">
+        <label>Tu nombre <span class="optional">(opcional)</span></label>
+        <input type="text" id="foto-nombre" placeholder="Ej: María, Equipo 3…" />
+      </div>
+      <div class="field">
+        <label>Fotografía</label>
+        <div class="upload-area" onclick="document.getElementById('foto-file').click()">
+          <div class="upload-placeholder" id="upload-placeholder">
+            <div class="upload-icon">📎</div>
+            <div class="upload-text">Toca para seleccionar o tomar una foto</div>
+            <div class="upload-hint">JPG, PNG — máx. 10MB</div>
+          </div>
+          <img id="preview-img" class="hidden" alt="Vista previa" />
+        </div>
+        <input type="file" id="foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFoto(event)" />
+      </div>
+      <div class="field">
+        <label>Comentario sobre la foto <span class="optional">(opcional)</span></label>
+        <textarea id="foto-comentario" placeholder="¿Qué muestra esta foto? ¿Por qué la capturaste?" rows="3"></textarea>
+      </div>
+      <button class="send-btn" onclick="enviarFoto()">
+        <span id="foto-btn-text">Guardar foto</span>
+      </button>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast hidden">
+      <span class="toast-icon">✅</span>
+      <span id="toast-msg">¡Guardado correctamente!</span>
+    </div>
+
+    <div class="footer">Puedes guardar tantas veces como quieras durante el taller.</div>
+
+  </div>
+
+  <script type="module">
+    import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+    // ──────────────────────────────────────────────────────────────
+    // PASO 3: Reemplaza estos valores con los de tu proyecto Firebase
+    // ──────────────────────────────────────────────────────────────
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBh8u86uwbcEzfdqJoGxEbcLrfGJUs0L70",
+    authDomain: "taller-cresio-liderazgo2.firebaseapp.com",
+    projectId: "taller-cresio-liderazgo2",
+    storageBucket: "taller-cresio-liderazgo2.firebasestorage.app",
+    messagingSenderId: "1008979829978",
+    appId: "1:1008979829978:web:37568296a81923702631e3"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
+    // ──────────────────────────────────────────────────────────────
+
+    const app     = initializeApp(firebaseConfig);
+    const db      = getFirestore(app);
+    const storage = getStorage(app);
+
+    window.selectType = function(tipo) {
+      document.getElementById('form-reflexion').classList.toggle('hidden', tipo !== 'reflexion');
+      document.getElementById('form-foto').classList.toggle('hidden',      tipo !== 'foto');
+      document.getElementById('btn-reflexion').classList.toggle('active',  tipo === 'reflexion');
+      document.getElementById('btn-foto').classList.toggle('active',       tipo === 'foto');
+    };
+
+    window.previewFoto = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = document.getElementById('preview-img');
+        img.src = ev.target.result;
+        img.classList.remove('hidden');
+        document.getElementById('upload-placeholder').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.enviarReflexion = async function() {
+      const texto  = document.getElementById('ref-texto').value.trim();
+      const nombre = document.getElementById('ref-nombre').value.trim();
+      if (!texto) { alert('Por favor escribe tu reflexión antes de guardar.'); return; }
+      const btn = document.getElementById('ref-btn-text');
+      btn.textContent = 'Guardando…';
+      try {
+        await addDoc(collection(db, 'entradas'), {
+          tipo: 'reflexion', nombre: nombre || 'Anónimo',
+          texto, timestamp: serverTimestamp()
+        });
+        document.getElementById('ref-texto').value  = '';
+        document.getElementById('ref-nombre').value = '';
+        btn.textContent = 'Guardar reflexión';
+        showToast('¡Reflexión guardada!');
+      } catch (err) {
+        btn.textContent = 'Guardar reflexión';
+        alert('Error al guardar. Revisa tu conexión.');
+        console.error(err);
+      }
+    };
+
+    window.enviarFoto = async function() {
+      const file       = document.getElementById('foto-file').files[0];
+      const comentario = document.getElementById('foto-comentario').value.trim();
+      const nombre     = document.getElementById('foto-nombre').value.trim();
+      if (!file) { alert('Por favor selecciona una foto antes de guardar.'); return; }
+      const btn = document.getElementById('foto-btn-text');
+      btn.textContent = 'Subiendo…';
+      try {
+        const storageRef = ref(storage, `fotos/${Date.now()}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        await addDoc(collection(db, 'entradas'), {
+          tipo: 'foto', nombre: nombre || 'Anónimo',
+          comentario: comentario || '', fotoUrl: url, timestamp: serverTimestamp()
+        });
+        document.getElementById('foto-file').value      = '';
+        document.getElementById('foto-comentario').value = '';
+        document.getElementById('foto-nombre').value    = '';
+        document.getElementById('preview-img').classList.add('hidden');
+        document.getElementById('upload-placeholder').classList.remove('hidden');
+        btn.textContent = 'Guardar foto';
+        showToast('¡Foto guardada!');
+      } catch (err) {
+        btn.textContent = 'Guardar foto';
+        alert('Error al guardar. Revisa tu conexión.');
+        console.error(err);
+      }
+    };
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 3000);
+    }
+  </script>
+
+</body>
+</html>
