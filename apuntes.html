@@ -84,33 +84,18 @@
   </div>
 
   <script type="module">
-    import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+    import { initializeApp }                                             from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp }        from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL }             from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 
-    // ──────────────────────────────────────────────────────────────
-    // PASO 3: Reemplaza estos valores con los de tu proyecto Firebase
-    // ──────────────────────────────────────────────────────────────
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBh8u86uwbcEzfdqJoGxEbcLrfGJUs0L70",
-    authDomain: "taller-cresio-liderazgo2.firebaseapp.com",
-    projectId: "taller-cresio-liderazgo2",
-    storageBucket: "taller-cresio-liderazgo2.firebasestorage.app",
-    messagingSenderId: "1008979829978",
-    appId: "1:1008979829978:web:37568296a81923702631e3"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
-    // ──────────────────────────────────────────────────────────────
+    const firebaseConfig = {
+      apiKey:            "AIzaSyBh8u86uwbcEzfdqJoGxEbcLrfGJUs0L70",
+      authDomain:        "taller-cresio-liderazgo2.firebaseapp.com",
+      projectId:         "taller-cresio-liderazgo2",
+      storageBucket:     "taller-cresio-liderazgo2.firebasestorage.app",
+      messagingSenderId: "1008979829978",
+      appId:             "1:1008979829978:web:37568296a81923702631e3"
+    };
 
     const app     = initializeApp(firebaseConfig);
     const db      = getFirestore(app);
@@ -144,8 +129,10 @@
       btn.textContent = 'Guardando…';
       try {
         await addDoc(collection(db, 'entradas'), {
-          tipo: 'reflexion', nombre: nombre || 'Anónimo',
-          texto, timestamp: serverTimestamp()
+          tipo:      'reflexion',
+          nombre:    nombre || 'Anónimo',
+          texto,
+          timestamp: serverTimestamp()
         });
         document.getElementById('ref-texto').value  = '';
         document.getElementById('ref-nombre').value = '';
@@ -170,12 +157,15 @@
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
         await addDoc(collection(db, 'entradas'), {
-          tipo: 'foto', nombre: nombre || 'Anónimo',
-          comentario: comentario || '', fotoUrl: url, timestamp: serverTimestamp()
+          tipo:       'foto',
+          nombre:     nombre || 'Anónimo',
+          comentario: comentario || '',
+          fotoUrl:    url,
+          timestamp:  serverTimestamp()
         });
-        document.getElementById('foto-file').value      = '';
+        document.getElementById('foto-file').value       = '';
         document.getElementById('foto-comentario').value = '';
-        document.getElementById('foto-nombre').value    = '';
+        document.getElementById('foto-nombre').value     = '';
         document.getElementById('preview-img').classList.add('hidden');
         document.getElementById('upload-placeholder').classList.remove('hidden');
         btn.textContent = 'Guardar foto';
