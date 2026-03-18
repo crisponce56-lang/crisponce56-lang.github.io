@@ -55,21 +55,20 @@
       <div class="field">
         <label>Fotografía</label>
         <div class="upload-area" id="upload-area">
-  <div class="upload-placeholder" id="upload-placeholder">
-    <div class="upload-buttons">
-      <button type="button" class="upload-btn" onclick="document.getElementById('foto-camara').click()">
-        📷 Tomar foto
-      </button>
-      <button type="button" class="upload-btn" onclick="document.getElementById('foto-galeria').click()">
-        🖼️ Elegir de galería
-      </button>
-    </div>
-    <div class="upload-hint">JPG, PNG — máx. 10MB</div>
-  </div>
-  <img id="preview-img" class="hidden" alt="Vista previa" />
-</div>
-<input type="file" id="foto-camara"  accept="image/*" capture="environment" style="display:none" onchange="previewFoto(event)" />
-<input type="file" id="foto-galeria" accept="image/*" style="display:none" onchange="previewFoto(event)" />
+          <div class="upload-placeholder" id="upload-placeholder">
+            <div class="upload-buttons">
+              <button type="button" class="upload-btn" onclick="abrirCamara()">
+                📷 Tomar foto
+              </button>
+              <button type="button" class="upload-btn" onclick="document.getElementById('foto-galeria').click()">
+                🖼️ Elegir de galería
+              </button>
+            </div>
+            <div class="upload-hint">JPG, PNG — máx. 10MB</div>
+          </div>
+          <img id="preview-img" class="hidden" alt="Vista previa" />
+        </div>
+        <input type="file" id="foto-galeria" accept="image/*" style="display:none" onchange="previewFoto(event)" />
       </div>
       <div class="field">
         <label>Comentario sobre la foto <span class="optional">(opcional)</span></label>
@@ -90,6 +89,22 @@
 
   </div>
 
+  <!-- Overlay de cámara -->
+  <div id="camara-overlay" class="hidden">
+    <div class="camara-box">
+      <video id="camara-video" autoplay playsinline></video>
+      <div class="camara-controles">
+        <button type="button" class="camara-btn camara-btn-capturar" onclick="capturarFoto()">
+          📸 Capturar
+        </button>
+        <button type="button" class="camara-btn camara-btn-cancelar" onclick="cerrarCamara()">
+          ✕ Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+  <canvas id="camara-canvas" style="display:none"></canvas>
+
   <script type="module">
     import { initializeApp }                                             from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp }        from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
@@ -108,6 +123,7 @@
     const db      = getFirestore(app);
     const storage = getStorage(app);
 
+    // ── Selección de tipo ──
     window.selectType = function(tipo) {
       document.getElementById('form-reflexion').classList.toggle('hidden', tipo !== 'reflexion');
       document.getElementById('form-foto').classList.toggle('hidden',      tipo !== 'foto');
@@ -115,19 +131,67 @@
       document.getElementById('btn-foto').classList.toggle('active',       tipo === 'foto');
     };
 
+    // ── Preview desde galería ──
     window.previewFoto = function(e) {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
       reader.onload = ev => {
         const img = document.getElementById('preview-img');
-        img.src = ev.target.result;
+        img.src   = ev.target.result;
         img.classList.remove('hidden');
         document.getElementById('upload-placeholder').classList.add('hidden');
       };
       reader.readAsDataURL(file);
     };
 
+    // ── Cámara via getUserMedia ──
+    let streamActivo = null;
+
+    window.abrirCamara = async function() {
+      const overlay = document.getElementById('camara-overlay');
+      const video   = document.getElementById('camara-video');
+      try {
+        streamActivo = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false
+        });
+        video.srcObject = streamActivo;
+        overlay.classList.remove('hidden');
+      } catch (err) {
+        alert('No se pudo acceder a la cámara. Verifica que el navegador tenga permiso para usarla.');
+        console.error(err);
+      }
+    };
+
+    window.cerrarCamara = function() {
+      if (streamActivo) {
+        streamActivo.getTracks().forEach(t => t.stop());
+        streamActivo = null;
+      }
+      document.getElementById('camara-overlay').classList.add('hidden');
+    };
+
+    window.capturarFoto = function() {
+      const video  = document.getElementById('camara-video');
+      const canvas = document.getElementById('camara-canvas');
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      canvas.toBlob(blob => {
+        const file = new File([blob], `foto_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        const dt   = new DataTransfer();
+        dt.items.add(file);
+        document.getElementById('foto-galeria').files = dt.files;
+        const img = document.getElementById('preview-img');
+        img.src   = URL.createObjectURL(blob);
+        img.classList.remove('hidden');
+        document.getElementById('upload-placeholder').classList.add('hidden');
+        cerrarCamara();
+      }, 'image/jpeg', 0.92);
+    };
+
+    // ── Enviar reflexión ──
     window.enviarReflexion = async function() {
       const texto  = document.getElementById('ref-texto').value.trim();
       const nombre = document.getElementById('ref-nombre').value.trim();
@@ -152,11 +216,12 @@
       }
     };
 
+    // ── Enviar foto ──
     window.enviarFoto = async function() {
-      const file       = document.getElementById('foto-file').files[0];
+      const file       = document.getElementById('foto-galeria').files[0];
       const comentario = document.getElementById('foto-comentario').value.trim();
       const nombre     = document.getElementById('foto-nombre').value.trim();
-      if (!file) { alert('Por favor selecciona una foto antes de guardar.'); return; }
+      if (!file) { alert('Por favor selecciona o toma una foto antes de guardar.'); return; }
       const btn = document.getElementById('foto-btn-text');
       btn.textContent = 'Subiendo…';
       try {
@@ -170,7 +235,7 @@
           fotoUrl:    url,
           timestamp:  serverTimestamp()
         });
-        document.getElementById('foto-file').value       = '';
+        document.getElementById('foto-galeria').value    = '';
         document.getElementById('foto-comentario').value = '';
         document.getElementById('foto-nombre').value     = '';
         document.getElementById('preview-img').classList.add('hidden');
@@ -184,6 +249,7 @@
       }
     };
 
+    // ── Toast ──
     function showToast(msg) {
       const t = document.getElementById('toast');
       document.getElementById('toast-msg').textContent = msg;
