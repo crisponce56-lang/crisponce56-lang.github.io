@@ -23,11 +23,15 @@
     <div class="type-selector">
       <button class="type-btn active" id="btn-reflexion" onclick="selectType('reflexion')">
         <span class="type-icon">✍️</span>
-        <span>Reflexión o apunte</span>
+        <span>Reflexión</span>
       </button>
       <button class="type-btn" id="btn-foto" onclick="selectType('foto')">
         <span class="type-icon">📷</span>
         <span>Fotografía</span>
+      </button>
+      <button class="type-btn" id="btn-voz" onclick="selectType('voz')">
+        <span class="type-icon">🎙️</span>
+        <span>Nota de voz</span>
       </button>
     </div>
 
@@ -79,6 +83,57 @@
       </button>
     </div>
 
+    <!-- Formulario nota de voz -->
+    <div id="form-voz" class="form-section hidden">
+      <div class="field">
+        <label>Tu nombre <span class="optional">(opcional)</span></label>
+        <input type="text" id="voz-nombre" placeholder="Ej: María, Equipo 3…" />
+      </div>
+      <div class="field">
+        <label>Nota de voz</label>
+        <div class="voz-area">
+
+          <!-- Estado: listo para grabar -->
+          <div id="voz-idle">
+            <div class="voz-icon">🎙️</div>
+            <div class="voz-hint">Toca el botón para comenzar a grabar</div>
+            <button type="button" class="voz-btn voz-btn-grabar" onclick="iniciarGrabacion()">
+              ● Iniciar grabación
+            </button>
+          </div>
+
+          <!-- Estado: grabando -->
+          <div id="voz-grabando" class="hidden">
+            <div class="voz-pulse"></div>
+            <div class="voz-timer" id="voz-timer">0:00</div>
+            <div class="voz-hint">Grabando… toca para detener</div>
+            <button type="button" class="voz-btn voz-btn-detener" onclick="detenerGrabacion()">
+              ■ Detener grabación
+            </button>
+          </div>
+
+          <!-- Estado: grabación lista -->
+          <div id="voz-lista" class="hidden">
+            <div class="voz-icon">✅</div>
+            <audio id="voz-preview" controls></audio>
+            <div class="voz-acciones">
+              <button type="button" class="upload-btn" onclick="rehacerGrabacion()">
+                🔄 Volver a grabar
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="field">
+        <label>Comentario <span class="optional">(opcional)</span></label>
+        <textarea id="voz-comentario" placeholder="¿Sobre qué es esta nota de voz?" rows="2"></textarea>
+      </div>
+      <button class="send-btn" onclick="enviarVoz()">
+        <span id="voz-btn-text">Guardar nota de voz</span>
+      </button>
+    </div>
+
     <!-- Toast -->
     <div id="toast" class="toast hidden">
       <span class="toast-icon">✅</span>
@@ -106,9 +161,9 @@
   <canvas id="camara-canvas" style="display:none"></canvas>
 
   <script type="module">
-    import { initializeApp }                                             from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp }        from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL }             from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
+    import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp }     from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL }          from "https://www.gstatic.com/firebasejs/12.10.0/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey:            "AIzaSyBh8u86uwbcEzfdqJoGxEbcLrfGJUs0L70",
@@ -123,15 +178,36 @@
     const db      = getFirestore(app);
     const storage = getStorage(app);
 
+    // ─────────────────────────────────────────
+    // Detectar el formato de audio compatible
+    // Android/Chrome → audio/webm
+    // iOS/Safari     → audio/mp4
+    // ─────────────────────────────────────────
+    function obtenerFormatoAudio() {
+      const formatos = [
+        { mime: 'audio/webm;codecs=opus', ext: 'webm' },
+        { mime: 'audio/webm',             ext: 'webm' },
+        { mime: 'audio/mp4',              ext: 'mp4'  },
+        { mime: 'audio/ogg;codecs=opus',  ext: 'ogg'  },
+        { mime: 'audio/ogg',              ext: 'ogg'  },
+      ];
+      for (const f of formatos) {
+        if (MediaRecorder.isTypeSupported(f.mime)) return f;
+      }
+      return { mime: '', ext: 'audio' }; // fallback
+    }
+
     // ── Selección de tipo ──
     window.selectType = function(tipo) {
-      document.getElementById('form-reflexion').classList.toggle('hidden', tipo !== 'reflexion');
-      document.getElementById('form-foto').classList.toggle('hidden',      tipo !== 'foto');
-      document.getElementById('btn-reflexion').classList.toggle('active',  tipo === 'reflexion');
-      document.getElementById('btn-foto').classList.toggle('active',       tipo === 'foto');
+      ['reflexion','foto','voz'].forEach(t => {
+        document.getElementById(`form-${t}`).classList.toggle('hidden', t !== tipo);
+        document.getElementById(`btn-${t}`).classList.toggle('active', t === tipo);
+      });
     };
 
-    // ── Preview desde galería ──
+    // ─────────────────────────────────────────
+    // FOTO
+    // ─────────────────────────────────────────
     window.previewFoto = function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -145,7 +221,6 @@
       reader.readAsDataURL(file);
     };
 
-    // ── Cámara via getUserMedia ──
     let streamActivo = null;
 
     window.abrirCamara = async function() {
@@ -153,22 +228,18 @@
       const video   = document.getElementById('camara-video');
       try {
         streamActivo = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
-          audio: false
+          video: { facingMode: 'environment' }, audio: false
         });
         video.srcObject = streamActivo;
         overlay.classList.remove('hidden');
       } catch (err) {
-        alert('No se pudo acceder a la cámara. Verifica que el navegador tenga permiso para usarla.');
+        alert('No se pudo acceder a la cámara. Verifica los permisos del navegador.');
         console.error(err);
       }
     };
 
     window.cerrarCamara = function() {
-      if (streamActivo) {
-        streamActivo.getTracks().forEach(t => t.stop());
-        streamActivo = null;
-      }
+      if (streamActivo) { streamActivo.getTracks().forEach(t => t.stop()); streamActivo = null; }
       document.getElementById('camara-overlay').classList.add('hidden');
     };
 
@@ -191,7 +262,152 @@
       }, 'image/jpeg', 0.92);
     };
 
-    // ── Enviar reflexión ──
+    window.enviarFoto = async function() {
+      const file       = document.getElementById('foto-galeria').files[0];
+      const comentario = document.getElementById('foto-comentario').value.trim();
+      const nombre     = document.getElementById('foto-nombre').value.trim();
+      if (!file) { alert('Por favor selecciona o toma una foto antes de guardar.'); return; }
+      const btn = document.getElementById('foto-btn-text');
+      btn.textContent = 'Subiendo…';
+      try {
+        const storageRef = ref(storage, `fotos/${Date.now()}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        await addDoc(collection(db, 'entradas'), {
+          tipo: 'foto', nombre: nombre || 'Anónimo',
+          comentario: comentario || '', fotoUrl: url, timestamp: serverTimestamp()
+        });
+        document.getElementById('foto-galeria').value    = '';
+        document.getElementById('foto-comentario').value = '';
+        document.getElementById('foto-nombre').value     = '';
+        document.getElementById('preview-img').classList.add('hidden');
+        document.getElementById('upload-placeholder').classList.remove('hidden');
+        btn.textContent = 'Guardar foto';
+        showToast('¡Foto guardada!');
+      } catch (err) {
+        btn.textContent = 'Guardar foto';
+        alert('Error al guardar. Revisa tu conexión.');
+        console.error(err);
+      }
+    };
+
+    // ─────────────────────────────────────────
+    // NOTA DE VOZ — compatible iOS y Android
+    // ─────────────────────────────────────────
+    let mediaRecorder = null;
+    let audioChunks   = [];
+    let audioBlob     = null;
+    let audioExt      = 'webm';
+    let audioMime     = 'audio/webm';
+    let timerInterval = null;
+    let segundos      = 0;
+
+    window.iniciarGrabacion = async function() {
+      try {
+        const stream  = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const formato = obtenerFormatoAudio();
+        audioMime     = formato.mime;
+        audioExt      = formato.ext;
+        audioChunks   = [];
+
+        // Iniciar MediaRecorder con el formato compatible
+        mediaRecorder = formato.mime
+          ? new MediaRecorder(stream, { mimeType: formato.mime })
+          : new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = e => {
+          if (e.data && e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          // Usar el tipo real que generó el recorder
+          const tipoReal = mediaRecorder.mimeType || audioMime || 'audio/webm';
+          audioBlob = new Blob(audioChunks, { type: tipoReal });
+          const url = URL.createObjectURL(audioBlob);
+          document.getElementById('voz-preview').src = url;
+          stream.getTracks().forEach(t => t.stop());
+          mostrarEstadoVoz('lista');
+        };
+
+        // Solicitar datos cada 250ms para mayor compatibilidad con iOS
+        mediaRecorder.start(250);
+
+        segundos = 0;
+        document.getElementById('voz-timer').textContent = '0:00';
+        timerInterval = setInterval(() => {
+          segundos++;
+          const m = Math.floor(segundos / 60);
+          const s = segundos % 60;
+          document.getElementById('voz-timer').textContent =
+            `${m}:${s.toString().padStart(2, '0')}`;
+          if (segundos >= 300) detenerGrabacion(); // máx 5 min
+        }, 1000);
+
+        mostrarEstadoVoz('grabando');
+      } catch (err) {
+        alert('No se pudo acceder al micrófono. Verifica los permisos del navegador.');
+        console.error(err);
+      }
+    };
+
+    window.detenerGrabacion = function() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        clearInterval(timerInterval);
+      }
+    };
+
+    window.rehacerGrabacion = function() {
+      audioBlob   = null;
+      audioChunks = [];
+      document.getElementById('voz-preview').src = '';
+      mostrarEstadoVoz('idle');
+    };
+
+    function mostrarEstadoVoz(estado) {
+      ['idle','grabando','lista'].forEach(e => {
+        document.getElementById(`voz-${e}`).classList.toggle('hidden', e !== estado);
+      });
+    }
+
+    window.enviarVoz = async function() {
+      if (!audioBlob) { alert('Por favor graba una nota de voz antes de guardar.'); return; }
+      const comentario = document.getElementById('voz-comentario').value.trim();
+      const nombre     = document.getElementById('voz-nombre').value.trim();
+      const btn        = document.getElementById('voz-btn-text');
+      btn.textContent  = 'Subiendo…';
+      try {
+        // Extensión correcta según el dispositivo
+        const nombreArchivo = `voz_${Date.now()}.${audioExt}`;
+        const archivo       = new File([audioBlob], nombreArchivo, { type: audioBlob.type });
+        const storageRef    = ref(storage, `voces/${nombreArchivo}`);
+        await uploadBytes(storageRef, archivo);
+        const url = await getDownloadURL(storageRef);
+        await addDoc(collection(db, 'entradas'), {
+          tipo:       'voz',
+          nombre:     nombre || 'Anónimo',
+          comentario: comentario || '',
+          vozUrl:     url,
+          duracion:   segundos,
+          timestamp:  serverTimestamp()
+        });
+        document.getElementById('voz-nombre').value     = '';
+        document.getElementById('voz-comentario').value = '';
+        audioBlob   = null;
+        audioChunks = [];
+        mostrarEstadoVoz('idle');
+        btn.textContent = 'Guardar nota de voz';
+        showToast('¡Nota de voz guardada!');
+      } catch (err) {
+        btn.textContent = 'Guardar nota de voz';
+        alert('Error al guardar. Revisa tu conexión.');
+        console.error(err);
+      }
+    };
+
+    // ─────────────────────────────────────────
+    // REFLEXIÓN
+    // ─────────────────────────────────────────
     window.enviarReflexion = async function() {
       const texto  = document.getElementById('ref-texto').value.trim();
       const nombre = document.getElementById('ref-nombre').value.trim();
@@ -211,39 +427,6 @@
         showToast('¡Reflexión guardada!');
       } catch (err) {
         btn.textContent = 'Guardar reflexión';
-        alert('Error al guardar. Revisa tu conexión.');
-        console.error(err);
-      }
-    };
-
-    // ── Enviar foto ──
-    window.enviarFoto = async function() {
-      const file       = document.getElementById('foto-galeria').files[0];
-      const comentario = document.getElementById('foto-comentario').value.trim();
-      const nombre     = document.getElementById('foto-nombre').value.trim();
-      if (!file) { alert('Por favor selecciona o toma una foto antes de guardar.'); return; }
-      const btn = document.getElementById('foto-btn-text');
-      btn.textContent = 'Subiendo…';
-      try {
-        const storageRef = ref(storage, `fotos/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        await addDoc(collection(db, 'entradas'), {
-          tipo:       'foto',
-          nombre:     nombre || 'Anónimo',
-          comentario: comentario || '',
-          fotoUrl:    url,
-          timestamp:  serverTimestamp()
-        });
-        document.getElementById('foto-galeria').value    = '';
-        document.getElementById('foto-comentario').value = '';
-        document.getElementById('foto-nombre').value     = '';
-        document.getElementById('preview-img').classList.add('hidden');
-        document.getElementById('upload-placeholder').classList.remove('hidden');
-        btn.textContent = 'Guardar foto';
-        showToast('¡Foto guardada!');
-      } catch (err) {
-        btn.textContent = 'Guardar foto';
         alert('Error al guardar. Revisa tu conexión.');
         console.error(err);
       }
