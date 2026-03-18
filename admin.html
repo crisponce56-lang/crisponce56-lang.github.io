@@ -56,38 +56,20 @@
   </div>
 
   <script type="module">
-    import { initializeApp }                                   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { initializeApp }                                        from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, orderBy, query }   from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
-    // ──────────────────────────────────────────────────────────────
-    // PASO 3: Reemplaza estos valores con los de tu proyecto Firebase
-    // ──────────────────────────────────────────────────────────────
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+    const firebaseConfig = {
+      apiKey:            "AIzaSyBh8u86uwbcEzfdqJoGxEbcLrfGJUs0L70",
+      authDomain:        "taller-cresio-liderazgo2.firebaseapp.com",
+      projectId:         "taller-cresio-liderazgo2",
+      storageBucket:     "taller-cresio-liderazgo2.firebasestorage.app",
+      messagingSenderId: "1008979829978",
+      appId:             "1:1008979829978:web:37568296a81923702631e3"
+    };
 
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyBh8u86uwbcEzfdqJoGxEbcLrfGJUs0L70",
-    authDomain: "taller-cresio-liderazgo2.firebaseapp.com",
-    projectId: "taller-cresio-liderazgo2",
-    storageBucket: "taller-cresio-liderazgo2.firebasestorage.app",
-    messagingSenderId: "1008979829978",
-    appId: "1:1008979829978:web:37568296a81923702631e3"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-</script>
-    // ──────────────────────────────────────────────────────────────
-
-    // ──────────────────────────────────────────────────────────────
-    // PASO 4: Cambia esta contraseña por la que tú elijas
-    // ──────────────────────────────────────────────────────────────
+    // ── Cambia esta contraseña por la que tú elijas ──
     const ADMIN_PASSWORD = "taller2026";
-    // ──────────────────────────────────────────────────────────────
 
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
