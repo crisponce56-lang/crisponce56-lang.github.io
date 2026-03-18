@@ -75,7 +75,9 @@ body {
 .login-logo {
   height: 48px;
   width: auto;
-  mix-blend-mode: multiply;
+  background: #000;
+  border-radius: 8px;
+  padding: 7px 16px;
 }
 
 .login-box h2 {
@@ -152,7 +154,9 @@ body {
 .topbar-logo {
   height: 32px;
   width: auto;
-  mix-blend-mode: multiply;
+  background: #000;
+  border-radius: 6px;
+  padding: 5px 12px;
 }
 
 .topbar h1 {
@@ -315,4 +319,32 @@ body {
   .filters { padding: 10px 16px; }
   #cards-container { padding: 0 16px 40px; grid-template-columns: 1fr; }
   .stats   { display: none; }
+}
+
+/* ── Nota de voz ── */
+.card-voz .card-badge { background: #eeedf8; color: #2B1F6B; }
+
+.badge-voz { background: #eeedf8; color: #2B1F6B; }
+
+@media (prefers-color-scheme: dark) {
+  .badge-voz { background: #1a183a; color: #AFA9EC; }
+}
+
+.card-audio {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+
+.card-dur {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+/* ── Filtro de voz ── */
+.filter-btn:nth-child(4).active {
+  background: #2B1F6B;
+  border-color: #2B1F6B;
 }
