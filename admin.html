@@ -38,6 +38,8 @@
           <span id="stat-ref">0 reflexiones</span>
           <span class="stat-sep">·</span>
           <span id="stat-foto">0 fotos</span>
+          <span class="stat-sep">·</span>
+          <span id="stat-voz">0 voces</span>
         </div>
         <button class="refresh-btn" onclick="cargarEntradas()">↻ Actualizar</button>
       </div>
@@ -47,6 +49,7 @@
       <button class="filter-btn active" onclick="filtrar('todos', this)">Todos</button>
       <button class="filter-btn" onclick="filtrar('reflexion', this)">Reflexiones</button>
       <button class="filter-btn" onclick="filtrar('foto', this)">Fotos</button>
+      <button class="filter-btn" onclick="filtrar('voz', this)">Notas de voz</button>
     </div>
 
     <div id="cards-container">
@@ -106,9 +109,11 @@
     function actualizarStats() {
       const refs  = todasLasEntradas.filter(e => e.tipo === 'reflexion').length;
       const fotos = todasLasEntradas.filter(e => e.tipo === 'foto').length;
+      const voces = todasLasEntradas.filter(e => e.tipo === 'voz').length;
       document.getElementById('stat-total').textContent = `${todasLasEntradas.length} entradas`;
       document.getElementById('stat-ref').textContent   = `${refs} reflexiones`;
       document.getElementById('stat-foto').textContent  = `${fotos} fotos`;
+      document.getElementById('stat-voz').textContent   = `${voces} voces`;
     }
 
     window.filtrar = function(tipo, btn) {
@@ -148,7 +153,8 @@
                 ⬇ Descargar texto
               </button>
             </div>`;
-        } else {
+
+        } else if (e.tipo === 'foto') {
           return `
             <div class="card card-foto" style="animation-delay:${i * 40}ms">
               <div class="card-top">
@@ -160,6 +166,24 @@
               ${e.comentario ? `<div class="card-texto">${escapeHtml(e.comentario)}</div>` : ''}
               <a class="dl-btn" href="${e.fotoUrl}" download target="_blank" rel="noopener">
                 ⬇ Descargar foto
+              </a>
+            </div>`;
+
+        } else if (e.tipo === 'voz') {
+          const dur = e.duracion
+            ? `${Math.floor(e.duracion/60)}:${String(e.duracion%60).padStart(2,'0')}`
+            : '—';
+          return `
+            <div class="card card-voz" style="animation-delay:${i * 40}ms">
+              <div class="card-top">
+                <span class="card-badge badge-voz">🎙️ Nota de voz</span>
+                <span class="card-date">${fecha}</span>
+              </div>
+              <div class="card-nombre">${e.nombre || 'Anónimo'} <span class="card-dur">${dur}</span></div>
+              ${e.comentario ? `<div class="card-texto">${escapeHtml(e.comentario)}</div>` : ''}
+              <audio controls src="${e.vozUrl}" class="card-audio"></audio>
+              <a class="dl-btn" href="${e.vozUrl}" download target="_blank" rel="noopener">
+                ⬇ Descargar audio
               </a>
             </div>`;
         }
@@ -177,11 +201,11 @@
 
     function escapeHtml(str = '') {
       return str
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
     function escapeAttr(str = '') {
-      return str.replace(/'/g, '&#39;').replace(/\n/g, ' ');
+      return str.replace(/'/g,'&#39;').replace(/\n/g,' ');
     }
   </script>
 
