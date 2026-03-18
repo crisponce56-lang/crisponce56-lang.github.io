@@ -54,15 +54,22 @@
       </div>
       <div class="field">
         <label>Fotografía</label>
-        <div class="upload-area" onclick="document.getElementById('foto-file').click()">
-          <div class="upload-placeholder" id="upload-placeholder">
-            <div class="upload-icon">📎</div>
-            <div class="upload-text">Toca para seleccionar o tomar una foto</div>
-            <div class="upload-hint">JPG, PNG — máx. 10MB</div>
-          </div>
-          <img id="preview-img" class="hidden" alt="Vista previa" />
-        </div>
-        <input type="file" id="foto-file" accept="image/*" style="display:none" onchange="previewFoto(event)" />
+        <div class="upload-area" id="upload-area">
+  <div class="upload-placeholder" id="upload-placeholder">
+    <div class="upload-buttons">
+      <button type="button" class="upload-btn" onclick="document.getElementById('foto-camara').click()">
+        📷 Tomar foto
+      </button>
+      <button type="button" class="upload-btn" onclick="document.getElementById('foto-galeria').click()">
+        🖼️ Elegir de galería
+      </button>
+    </div>
+    <div class="upload-hint">JPG, PNG — máx. 10MB</div>
+  </div>
+  <img id="preview-img" class="hidden" alt="Vista previa" />
+</div>
+<input type="file" id="foto-camara"  accept="image/*" capture="environment" style="display:none" onchange="previewFoto(event)" />
+<input type="file" id="foto-galeria" accept="image/*" style="display:none" onchange="previewFoto(event)" />
       </div>
       <div class="field">
         <label>Comentario sobre la foto <span class="optional">(opcional)</span></label>
