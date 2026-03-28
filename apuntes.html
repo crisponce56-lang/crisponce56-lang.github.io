@@ -19,12 +19,12 @@
       <input type="password" id="acceso-pwd" placeholder="Clave de acceso"
              onkeydown="if(event.key==='Enter') verificarAcceso()" />
       <button onclick="verificarAcceso()">Ingresar</button>
-      <div id="acceso-error" class="acceso-error hidden">Clave incorrecta. Inténtalo de nuevo.</div>
+      <div id="acceso-error" class="acceso-error">Clave incorrecta. Inténtalo de nuevo.</div>
     </div>
   </div>
 
-  <!-- ── Contenido principal (oculto hasta validar) ── -->
-  <div id="contenido-principal" class="hidden">
+  <!-- ── Contenido principal ── -->
+  <div id="contenido-principal">
 
     <div class="wrap">
 
@@ -173,10 +173,13 @@
   <canvas id="camara-canvas" style="display:none"></canvas>
 
   <script>
-    // ── Clave de acceso — debe ser la misma que en index.html ──
-    const CLAVE_ACCESO = "cresio2026";
+    // ── Cambia esta clave — debe ser la misma que en index.html ──
+    const CLAVE_ACCESO = "cresio2025";
 
-    // Verificar sesión activa
+    const pantallaAcceso = document.getElementById('acceso-screen');
+    const contenido      = document.getElementById('contenido-principal');
+    const errorMsg       = document.getElementById('acceso-error');
+
     if (sessionStorage.getItem('taller_acceso') === 'ok') {
       mostrarContenido();
     }
@@ -187,15 +190,15 @@
         sessionStorage.setItem('taller_acceso', 'ok');
         mostrarContenido();
       } else {
-        document.getElementById('acceso-error').classList.remove('hidden');
+        errorMsg.classList.add('visible');
         document.getElementById('acceso-pwd').value = '';
         document.getElementById('acceso-pwd').focus();
       }
     }
 
     function mostrarContenido() {
-      document.getElementById('acceso-screen').classList.add('hidden');
-      document.getElementById('contenido-principal').classList.remove('hidden');
+      pantallaAcceso.classList.add('oculto');
+      contenido.classList.add('visible');
     }
   </script>
 
@@ -238,7 +241,6 @@
       });
     };
 
-    // ── FOTO ──
     window.previewFoto = function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -322,7 +324,6 @@
       }
     };
 
-    // ── NOTA DE VOZ ──
     let mediaRecorder = null;
     let audioChunks   = [];
     let audioBlob     = null;
@@ -413,7 +414,6 @@
       }
     };
 
-    // ── REFLEXIÓN ──
     window.enviarReflexion = async function() {
       const texto  = document.getElementById('ref-texto').value.trim();
       const nombre = document.getElementById('ref-nombre').value.trim();
