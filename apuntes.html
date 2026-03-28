@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mis apuntes del taller — Cresio</title>
+
+  <!-- CRÍTICO: ocultar el contenido ANTES de que cargue cualquier CSS externo -->
+  <style>
+    #contenido-principal { display: none !important; }
+    #acceso-screen { display: flex; }
+  </style>
+
   <link rel="stylesheet" href="apuntes-style.css" />
 </head>
 <body>
@@ -172,17 +179,12 @@
   </div>
   <canvas id="camara-canvas" style="display:none"></canvas>
 
+  <!-- Acceso — script normal (no module) para ejecutarse inmediatamente -->
   <script>
-    // ── Cambia esta clave — debe ser la misma que en index.html ──
-    const CLAVE_ACCESO = "cresio2025";
-
+    const CLAVE_ACCESO   = "cresio2025";
     const pantallaAcceso = document.getElementById('acceso-screen');
     const contenido      = document.getElementById('contenido-principal');
     const errorMsg       = document.getElementById('acceso-error');
-
-    if (sessionStorage.getItem('taller_acceso') === 'ok') {
-      mostrarContenido();
-    }
 
     function verificarAcceso() {
       const val = document.getElementById('acceso-pwd').value;
@@ -190,18 +192,24 @@
         sessionStorage.setItem('taller_acceso', 'ok');
         mostrarContenido();
       } else {
-        errorMsg.classList.add('visible');
+        errorMsg.style.display = 'block';
         document.getElementById('acceso-pwd').value = '';
         document.getElementById('acceso-pwd').focus();
       }
     }
 
     function mostrarContenido() {
-      pantallaAcceso.classList.add('oculto');
-      contenido.classList.add('visible');
+      pantallaAcceso.style.display  = 'none';
+      contenido.style.display       = 'block';
+    }
+
+    // Si ya hay sesión activa mostrar contenido directamente
+    if (sessionStorage.getItem('taller_acceso') === 'ok') {
+      mostrarContenido();
     }
   </script>
 
+  <!-- Firebase y funcionalidad — module -->
   <script type="module">
     import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp }     from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
