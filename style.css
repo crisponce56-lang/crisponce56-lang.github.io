@@ -57,11 +57,13 @@ body {
   text-align: center;
   margin-bottom: 40px;
 }
+
 .logo {
-  display: block;
-  margin: 0 auto 20px;
   height: 60px;
   width: auto;
+  margin: 0 auto 20px;
+  display: block;
+  mix-blend-mode: multiply;
 }
 
 .header-tag {
@@ -123,9 +125,7 @@ body {
   transition: opacity .15s;
 }
 
-.block-header:hover {
-  opacity: .9;
-}
+.block-header:hover { opacity: .9; }
 
 .icon {
   width: 34px;
@@ -152,9 +152,7 @@ body {
   transition: transform .25s ease;
 }
 
-.chevron.open {
-  transform: rotate(90deg);
-}
+.chevron.open { transform: rotate(90deg); }
 
 /* ── Body ── */
 .block-body {
@@ -173,9 +171,7 @@ body {
   padding: 16px 18px 18px;
 }
 
-.block-body ul {
-  padding-left: 18px;
-}
+.block-body ul { padding-left: 18px; }
 
 .block-body li {
   font-size: 14px;
@@ -240,14 +236,8 @@ body {
   border-radius: 2px;
 }
 
-.step {
-  position: relative;
-  margin-bottom: 12px;
-}
-
-.step:last-child {
-  margin-bottom: 0;
-}
+.step { position: relative; margin-bottom: 12px; }
+.step:last-child { margin-bottom: 0; }
 
 .step-dot {
   position: absolute;
@@ -265,29 +255,13 @@ body {
   gap: 8px;
 }
 
-.step-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
+.step-name  { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.step-time  { font-size: 12px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
+.step-desc  { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; line-height: 1.5; }
 
-.step-time {
-  font-size: 12px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.step-desc {
-  font-size: 12.5px;
-  color: var(--text-secondary);
-  margin-top: 2px;
-  line-height: 1.5;
-}
-
-.step-neg   .step-dot { background: #378ADD; }
-.step-eval  .step-dot { background: #1D9E75; }
-.step-prep  .step-dot { background: #EF9F27; }
+.step-neg    .step-dot { background: #378ADD; }
+.step-eval   .step-dot { background: #1D9E75; }
+.step-prep   .step-dot { background: #EF9F27; }
 .step-cierre .step-dot { background: #E24B4A; }
 
 /* ── Total bar ── */
@@ -302,16 +276,11 @@ body {
   border: 1px solid var(--border-mid);
 }
 
-.total-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
+.total-label { font-size: 13px; color: var(--text-secondary); }
+.total-val   { font-size: 15px; font-weight: 500; color: var(--text-primary); }
 
-.total-val {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
+/* ── Hidden ── */
+.hidden { display: none !important; }
 
 /* ==============================
    COLORES POR BLOQUE — Parte 1
@@ -370,3 +339,91 @@ body {
   .step-name { font-size: 13px; }
   .total-bar { flex-direction: column; gap: 4px; text-align: center; }
 }
+
+/* =============================================
+   PANTALLA DE ACCESO
+   ============================================= */
+#acceso-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  background: var(--bg);
+}
+
+.acceso-box {
+  background: var(--surface);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg);
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.acceso-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.acceso-logo {
+  height: 48px;
+  width: auto;
+  mix-blend-mode: multiply;
+}
+
+.acceso-box h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.acceso-box p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.acceso-box input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  outline: none;
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: .12em;
+  transition: border-color .2s;
+}
+
+.acceso-box input:focus { border-color: #3B6D11; }
+
+.acceso-box button {
+  width: 100%;
+  padding: 12px;
+  background: #3B6D11;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.acceso-box button:hover  { opacity: .88; }
+.acceso-box button:active { opacity: .75; }
+
+.acceso-error { margin-top: 10px; font-size: 13px; color: #E24B4A; }
+.acceso-error.hidden { display: none; }
