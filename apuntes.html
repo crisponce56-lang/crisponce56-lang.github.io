@@ -8,140 +8,152 @@
 </head>
 <body>
 
-  <div class="wrap">
-
-    <div class="header">
-      <div class="logo-wrap">
-        <img src="LogoCresioPng.png" alt="Cresio" class="logo" />
+  <!-- ── Pantalla de acceso ── -->
+  <div id="acceso-screen">
+    <div class="acceso-box">
+      <div class="acceso-logo-wrap">
+        <img src="LogoCresioPng.png" alt="Cresio" class="acceso-logo" />
       </div>
-      <div class="header-tag">Taller colaborativo</div>
-      <h1>Captura tu momento</h1>
-      <p>¿Algo te pareció importante? Guárdalo aquí antes de que se pierda.</p>
+      <h2>Taller de Negociación</h2>
+      <p>Ingresa la clave para acceder.</p>
+      <input type="password" id="acceso-pwd" placeholder="Clave de acceso"
+             onkeydown="if(event.key==='Enter') verificarAcceso()" />
+      <button onclick="verificarAcceso()">Ingresar</button>
+      <div id="acceso-error" class="acceso-error hidden">Clave incorrecta. Inténtalo de nuevo.</div>
     </div>
+  </div>
 
-    <!-- Selector de tipo -->
-    <div class="type-selector">
-      <button class="type-btn active" id="btn-reflexion" onclick="selectType('reflexion')">
-        <span class="type-icon">✍️</span>
-        <span>Reflexión</span>
-      </button>
-      <button class="type-btn" id="btn-foto" onclick="selectType('foto')">
-        <span class="type-icon">📷</span>
-        <span>Fotografía</span>
-      </button>
-      <button class="type-btn" id="btn-voz" onclick="selectType('voz')">
-        <span class="type-icon">🎙️</span>
-        <span>Nota de voz</span>
-      </button>
-    </div>
+  <!-- ── Contenido principal (oculto hasta validar) ── -->
+  <div id="contenido-principal" class="hidden">
 
-    <!-- Formulario reflexión -->
-    <div id="form-reflexion" class="form-section">
-      <div class="field">
-        <label>Tu nombre <span class="optional">(opcional)</span></label>
-        <input type="text" id="ref-nombre" placeholder="Ej: María, Equipo 3…" />
-      </div>
-      <div class="field">
-        <label>Tu reflexión o apunte</label>
-        <textarea id="ref-texto" placeholder="Escribe aquí lo que quieres recordar…" rows="5"></textarea>
-      </div>
-      <button class="send-btn" onclick="enviarReflexion()">
-        <span id="ref-btn-text">Guardar reflexión</span>
-      </button>
-    </div>
+    <div class="wrap">
 
-    <!-- Formulario foto -->
-    <div id="form-foto" class="form-section hidden">
-      <div class="field">
-        <label>Tu nombre <span class="optional">(opcional)</span></label>
-        <input type="text" id="foto-nombre" placeholder="Ej: María, Equipo 3…" />
+      <div class="header">
+        <div class="logo-wrap">
+          <img src="LogoCresioPng.png" alt="Cresio" class="logo" />
+        </div>
+        <div class="header-tag">Taller colaborativo</div>
+        <h1>Captura tu momento</h1>
+        <p>¿Algo te pareció importante? Guárdalo aquí antes de que se pierda.</p>
       </div>
-      <div class="field">
-        <label>Fotografía</label>
-        <div class="upload-area" id="upload-area">
-          <div class="upload-placeholder" id="upload-placeholder">
-            <div class="upload-buttons">
-              <button type="button" class="upload-btn" onclick="abrirCamara()">
-                📷 Tomar foto
-              </button>
-              <button type="button" class="upload-btn" onclick="document.getElementById('foto-galeria').click()">
-                🖼️ Elegir de galería
+
+      <!-- Selector de tipo -->
+      <div class="type-selector">
+        <button class="type-btn active" id="btn-reflexion" onclick="selectType('reflexion')">
+          <span class="type-icon">✍️</span>
+          <span>Reflexión</span>
+        </button>
+        <button class="type-btn" id="btn-foto" onclick="selectType('foto')">
+          <span class="type-icon">📷</span>
+          <span>Fotografía</span>
+        </button>
+        <button class="type-btn" id="btn-voz" onclick="selectType('voz')">
+          <span class="type-icon">🎙️</span>
+          <span>Nota de voz</span>
+        </button>
+      </div>
+
+      <!-- Formulario reflexión -->
+      <div id="form-reflexion" class="form-section">
+        <div class="field">
+          <label>Tu nombre <span class="optional">(opcional)</span></label>
+          <input type="text" id="ref-nombre" placeholder="Ej: María, Equipo 3…" />
+        </div>
+        <div class="field">
+          <label>Tu reflexión o apunte</label>
+          <textarea id="ref-texto" placeholder="Escribe aquí lo que quieres recordar…" rows="5"></textarea>
+        </div>
+        <button class="send-btn" onclick="enviarReflexion()">
+          <span id="ref-btn-text">Guardar reflexión</span>
+        </button>
+      </div>
+
+      <!-- Formulario foto -->
+      <div id="form-foto" class="form-section hidden">
+        <div class="field">
+          <label>Tu nombre <span class="optional">(opcional)</span></label>
+          <input type="text" id="foto-nombre" placeholder="Ej: María, Equipo 3…" />
+        </div>
+        <div class="field">
+          <label>Fotografía</label>
+          <div class="upload-area" id="upload-area">
+            <div class="upload-placeholder" id="upload-placeholder">
+              <div class="upload-buttons">
+                <button type="button" class="upload-btn" onclick="abrirCamara()">
+                  📷 Tomar foto
+                </button>
+                <button type="button" class="upload-btn" onclick="document.getElementById('foto-galeria').click()">
+                  🖼️ Elegir de galería
+                </button>
+              </div>
+              <div class="upload-hint">JPG, PNG — máx. 10MB</div>
+            </div>
+            <img id="preview-img" class="hidden" alt="Vista previa" />
+          </div>
+          <input type="file" id="foto-galeria" accept="image/*" style="display:none" onchange="previewFoto(event)" />
+        </div>
+        <div class="field">
+          <label>Comentario sobre la foto <span class="optional">(opcional)</span></label>
+          <textarea id="foto-comentario" placeholder="¿Qué muestra esta foto? ¿Por qué la capturaste?" rows="3"></textarea>
+        </div>
+        <button class="send-btn" onclick="enviarFoto()">
+          <span id="foto-btn-text">Guardar foto</span>
+        </button>
+      </div>
+
+      <!-- Formulario nota de voz -->
+      <div id="form-voz" class="form-section hidden">
+        <div class="field">
+          <label>Tu nombre <span class="optional">(opcional)</span></label>
+          <input type="text" id="voz-nombre" placeholder="Ej: María, Equipo 3…" />
+        </div>
+        <div class="field">
+          <label>Nota de voz</label>
+          <div class="voz-area">
+            <div id="voz-idle">
+              <div class="voz-icon">🎙️</div>
+              <div class="voz-hint">Toca el botón para comenzar a grabar</div>
+              <button type="button" class="voz-btn voz-btn-grabar" onclick="iniciarGrabacion()">
+                ● Iniciar grabación
               </button>
             </div>
-            <div class="upload-hint">JPG, PNG — máx. 10MB</div>
-          </div>
-          <img id="preview-img" class="hidden" alt="Vista previa" />
-        </div>
-        <input type="file" id="foto-galeria" accept="image/*" style="display:none" onchange="previewFoto(event)" />
-      </div>
-      <div class="field">
-        <label>Comentario sobre la foto <span class="optional">(opcional)</span></label>
-        <textarea id="foto-comentario" placeholder="¿Qué muestra esta foto? ¿Por qué la capturaste?" rows="3"></textarea>
-      </div>
-      <button class="send-btn" onclick="enviarFoto()">
-        <span id="foto-btn-text">Guardar foto</span>
-      </button>
-    </div>
-
-    <!-- Formulario nota de voz -->
-    <div id="form-voz" class="form-section hidden">
-      <div class="field">
-        <label>Tu nombre <span class="optional">(opcional)</span></label>
-        <input type="text" id="voz-nombre" placeholder="Ej: María, Equipo 3…" />
-      </div>
-      <div class="field">
-        <label>Nota de voz</label>
-        <div class="voz-area">
-
-          <!-- Estado: listo para grabar -->
-          <div id="voz-idle">
-            <div class="voz-icon">🎙️</div>
-            <div class="voz-hint">Toca el botón para comenzar a grabar</div>
-            <button type="button" class="voz-btn voz-btn-grabar" onclick="iniciarGrabacion()">
-              ● Iniciar grabación
-            </button>
-          </div>
-
-          <!-- Estado: grabando -->
-          <div id="voz-grabando" class="hidden">
-            <div class="voz-pulse"></div>
-            <div class="voz-timer" id="voz-timer">0:00</div>
-            <div class="voz-hint">Grabando… toca para detener</div>
-            <button type="button" class="voz-btn voz-btn-detener" onclick="detenerGrabacion()">
-              ■ Detener grabación
-            </button>
-          </div>
-
-          <!-- Estado: grabación lista -->
-          <div id="voz-lista" class="hidden">
-            <div class="voz-icon">✅</div>
-            <audio id="voz-preview" controls></audio>
-            <div class="voz-acciones">
-              <button type="button" class="upload-btn" onclick="rehacerGrabacion()">
-                🔄 Volver a grabar
+            <div id="voz-grabando" class="hidden">
+              <div class="voz-pulse"></div>
+              <div class="voz-timer" id="voz-timer">0:00</div>
+              <div class="voz-hint">Grabando… toca para detener</div>
+              <button type="button" class="voz-btn voz-btn-detener" onclick="detenerGrabacion()">
+                ■ Detener grabación
               </button>
             </div>
+            <div id="voz-lista" class="hidden">
+              <div class="voz-icon">✅</div>
+              <audio id="voz-preview" controls></audio>
+              <div class="voz-acciones">
+                <button type="button" class="upload-btn" onclick="rehacerGrabacion()">
+                  🔄 Volver a grabar
+                </button>
+              </div>
+            </div>
           </div>
-
         </div>
+        <div class="field">
+          <label>Comentario <span class="optional">(opcional)</span></label>
+          <textarea id="voz-comentario" placeholder="¿Sobre qué es esta nota de voz?" rows="2"></textarea>
+        </div>
+        <button class="send-btn" onclick="enviarVoz()">
+          <span id="voz-btn-text">Guardar nota de voz</span>
+        </button>
       </div>
-      <div class="field">
-        <label>Comentario <span class="optional">(opcional)</span></label>
-        <textarea id="voz-comentario" placeholder="¿Sobre qué es esta nota de voz?" rows="2"></textarea>
+
+      <!-- Toast -->
+      <div id="toast" class="toast hidden">
+        <span class="toast-icon">✅</span>
+        <span id="toast-msg">¡Guardado correctamente!</span>
       </div>
-      <button class="send-btn" onclick="enviarVoz()">
-        <span id="voz-btn-text">Guardar nota de voz</span>
-      </button>
+
+      <div class="footer">Puedes guardar tantas veces como quieras durante el taller.</div>
+
     </div>
-
-    <!-- Toast -->
-    <div id="toast" class="toast hidden">
-      <span class="toast-icon">✅</span>
-      <span id="toast-msg">¡Guardado correctamente!</span>
-    </div>
-
-    <div class="footer">Puedes guardar tantas veces como quieras durante el taller.</div>
-
   </div>
 
   <!-- Overlay de cámara -->
@@ -159,6 +171,33 @@
     </div>
   </div>
   <canvas id="camara-canvas" style="display:none"></canvas>
+
+  <script>
+    // ── Clave de acceso — debe ser la misma que en index.html ──
+    const CLAVE_ACCESO = "cresio2026";
+
+    // Verificar sesión activa
+    if (sessionStorage.getItem('taller_acceso') === 'ok') {
+      mostrarContenido();
+    }
+
+    function verificarAcceso() {
+      const val = document.getElementById('acceso-pwd').value;
+      if (val === CLAVE_ACCESO) {
+        sessionStorage.setItem('taller_acceso', 'ok');
+        mostrarContenido();
+      } else {
+        document.getElementById('acceso-error').classList.remove('hidden');
+        document.getElementById('acceso-pwd').value = '';
+        document.getElementById('acceso-pwd').focus();
+      }
+    }
+
+    function mostrarContenido() {
+      document.getElementById('acceso-screen').classList.add('hidden');
+      document.getElementById('contenido-principal').classList.remove('hidden');
+    }
+  </script>
 
   <script type="module">
     import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
@@ -178,11 +217,6 @@
     const db      = getFirestore(app);
     const storage = getStorage(app);
 
-    // ─────────────────────────────────────────
-    // Detectar el formato de audio compatible
-    // Android/Chrome → audio/webm
-    // iOS/Safari     → audio/mp4
-    // ─────────────────────────────────────────
     function obtenerFormatoAudio() {
       const formatos = [
         { mime: 'audio/webm;codecs=opus', ext: 'webm' },
@@ -194,10 +228,9 @@
       for (const f of formatos) {
         if (MediaRecorder.isTypeSupported(f.mime)) return f;
       }
-      return { mime: '', ext: 'audio' }; // fallback
+      return { mime: '', ext: 'audio' };
     }
 
-    // ── Selección de tipo ──
     window.selectType = function(tipo) {
       ['reflexion','foto','voz'].forEach(t => {
         document.getElementById(`form-${t}`).classList.toggle('hidden', t !== tipo);
@@ -205,9 +238,7 @@
       });
     };
 
-    // ─────────────────────────────────────────
-    // FOTO
-    // ─────────────────────────────────────────
+    // ── FOTO ──
     window.previewFoto = function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -291,14 +322,11 @@
       }
     };
 
-    // ─────────────────────────────────────────
-    // NOTA DE VOZ — compatible iOS y Android
-    // ─────────────────────────────────────────
+    // ── NOTA DE VOZ ──
     let mediaRecorder = null;
     let audioChunks   = [];
     let audioBlob     = null;
     let audioExt      = 'webm';
-    let audioMime     = 'audio/webm';
     let timerInterval = null;
     let segundos      = 0;
 
@@ -306,43 +334,29 @@
       try {
         const stream  = await navigator.mediaDevices.getUserMedia({ audio: true });
         const formato = obtenerFormatoAudio();
-        audioMime     = formato.mime;
         audioExt      = formato.ext;
         audioChunks   = [];
-
-        // Iniciar MediaRecorder con el formato compatible
         mediaRecorder = formato.mime
           ? new MediaRecorder(stream, { mimeType: formato.mime })
           : new MediaRecorder(stream);
-
-        mediaRecorder.ondataavailable = e => {
-          if (e.data && e.data.size > 0) audioChunks.push(e.data);
-        };
-
+        mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) audioChunks.push(e.data); };
         mediaRecorder.onstop = () => {
-          // Usar el tipo real que generó el recorder
-          const tipoReal = mediaRecorder.mimeType || audioMime || 'audio/webm';
+          const tipoReal = mediaRecorder.mimeType || 'audio/webm';
           audioBlob = new Blob(audioChunks, { type: tipoReal });
-          const url = URL.createObjectURL(audioBlob);
-          document.getElementById('voz-preview').src = url;
+          document.getElementById('voz-preview').src = URL.createObjectURL(audioBlob);
           stream.getTracks().forEach(t => t.stop());
           mostrarEstadoVoz('lista');
         };
-
-        // Solicitar datos cada 250ms para mayor compatibilidad con iOS
         mediaRecorder.start(250);
-
         segundos = 0;
         document.getElementById('voz-timer').textContent = '0:00';
         timerInterval = setInterval(() => {
           segundos++;
           const m = Math.floor(segundos / 60);
           const s = segundos % 60;
-          document.getElementById('voz-timer').textContent =
-            `${m}:${s.toString().padStart(2, '0')}`;
-          if (segundos >= 300) detenerGrabacion(); // máx 5 min
+          document.getElementById('voz-timer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+          if (segundos >= 300) detenerGrabacion();
         }, 1000);
-
         mostrarEstadoVoz('grabando');
       } catch (err) {
         alert('No se pudo acceder al micrófono. Verifica los permisos del navegador.');
@@ -358,8 +372,7 @@
     };
 
     window.rehacerGrabacion = function() {
-      audioBlob   = null;
-      audioChunks = [];
+      audioBlob = null; audioChunks = [];
       document.getElementById('voz-preview').src = '';
       mostrarEstadoVoz('idle');
     };
@@ -377,24 +390,19 @@
       const btn        = document.getElementById('voz-btn-text');
       btn.textContent  = 'Subiendo…';
       try {
-        // Extensión correcta según el dispositivo
         const nombreArchivo = `voz_${Date.now()}.${audioExt}`;
         const archivo       = new File([audioBlob], nombreArchivo, { type: audioBlob.type });
         const storageRef    = ref(storage, `voces/${nombreArchivo}`);
         await uploadBytes(storageRef, archivo);
         const url = await getDownloadURL(storageRef);
         await addDoc(collection(db, 'entradas'), {
-          tipo:       'voz',
-          nombre:     nombre || 'Anónimo',
-          comentario: comentario || '',
-          vozUrl:     url,
-          duracion:   segundos,
-          timestamp:  serverTimestamp()
+          tipo: 'voz', nombre: nombre || 'Anónimo',
+          comentario: comentario || '', vozUrl: url,
+          duracion: segundos, timestamp: serverTimestamp()
         });
         document.getElementById('voz-nombre').value     = '';
         document.getElementById('voz-comentario').value = '';
-        audioBlob   = null;
-        audioChunks = [];
+        audioBlob = null; audioChunks = [];
         mostrarEstadoVoz('idle');
         btn.textContent = 'Guardar nota de voz';
         showToast('¡Nota de voz guardada!');
@@ -405,9 +413,7 @@
       }
     };
 
-    // ─────────────────────────────────────────
-    // REFLEXIÓN
-    // ─────────────────────────────────────────
+    // ── REFLEXIÓN ──
     window.enviarReflexion = async function() {
       const texto  = document.getElementById('ref-texto').value.trim();
       const nombre = document.getElementById('ref-nombre').value.trim();
@@ -416,10 +422,8 @@
       btn.textContent = 'Guardando…';
       try {
         await addDoc(collection(db, 'entradas'), {
-          tipo:      'reflexion',
-          nombre:    nombre || 'Anónimo',
-          texto,
-          timestamp: serverTimestamp()
+          tipo: 'reflexion', nombre: nombre || 'Anónimo',
+          texto, timestamp: serverTimestamp()
         });
         document.getElementById('ref-texto').value  = '';
         document.getElementById('ref-nombre').value = '';
@@ -432,7 +436,6 @@
       }
     };
 
-    // ── Toast ──
     function showToast(msg) {
       const t = document.getElementById('toast');
       document.getElementById('toast-msg').textContent = msg;
