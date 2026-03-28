@@ -3,231 +3,284 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guía de Negociación Colaborativa</title>
+  <title>Guía del Taller — Cresio</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div class="wrap">
-
-    <div class="header">
-      <img src="LogoCresioPng.png" alt="Logo" class="logo" />
-      <div class="header-tag">Taller colaborativo</div>
-      <h1>Guía completa del juego<br>de negociación</h1>
-      <p>Todo lo que necesitas saber — toca cada sección para expandirla</p>
+  <!-- ── Pantalla de acceso ── -->
+  <div id="acceso-screen">
+    <div class="acceso-box">
+      <div class="acceso-logo-wrap">
+        <img src="LogoCresioPng.png" alt="Cresio" class="acceso-logo" />
+      </div>
+      <h2>Taller de Negociación</h2>
+      <p>Ingresa la clave para acceder al contenido.</p>
+      <input type="password" id="acceso-pwd" placeholder="Clave de acceso"
+             onkeydown="if(event.key==='Enter') verificarAcceso()" />
+      <button onclick="verificarAcceso()">Ingresar</button>
+      <div id="acceso-error" class="acceso-error hidden">Clave incorrecta. Inténtalo de nuevo.</div>
     </div>
-
-    <!-- PARTE 1 -->
-    <div class="section-label">Parte 1 · Lo que debes saber</div>
-
-    <div class="block b1">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">📋</div>
-        <div class="block-title">1. ¿Qué vas a hacer?</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <ul>
-          <li>Trabajas en equipo. Cada equipo tiene <strong>un proyecto propio</strong>.</li>
-          <li>Tu proyecto necesita <strong>fichas específicas</strong> para completarse.</li>
-          <li>Tu misión es <strong>negociar bien</strong> para conseguir las fichas que te faltan.</li>
-        </ul>
-        <div class="note">Antes de salir a negociar, revisa bien tu hoja: qué proyecto tienes, qué fichas tienes, cuáles te faltan y cuáles podrías ofrecer.</div>
-      </div>
-    </div>
-
-    <div class="block b2">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">🎯</div>
-        <div class="block-title">2. ¿Cuál es la meta de tu equipo?</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <ul>
-          <li>Juntar el número de fichas correctas que tu equipo necesita.</li>
-          <li>Según cuántas fichas correctas tengas, puedes pedir:</li>
-        </ul>
-        <div class="badge-row">
-          <span class="badge badge-amber">Confianza — etapa intermedia</span>
-          <span class="badge badge-green">Aprobación — proyecto ejecutado</span>
-        </div>
-        <div class="note">Tu equipo sabe internamente cuántas fichas necesita para cada nivel. No se lo digas a otros grupos si no es necesario.</div>
-      </div>
-    </div>
-
-    <div class="block b3">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">⚙️</div>
-        <div class="block-title">3. ¿Cómo se juega?</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <ul>
-          <li>Solo <strong>2 personas por equipo</strong> pueden salir a negociar con otros grupos.</li>
-          <li>Los demás se quedan en la mesa analizando: qué falta, qué conviene ofrecer, qué cuidar.</li>
-          <li>Pueden cambiar fichas, hacer acuerdos con uno o más equipos, rechazar propuestas y volver a negociar.</li>
-          <li><strong>No se puede</strong> quitar fichas sin acuerdo, ni reunir a todos los grupos a la vez.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="block b4">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">✍️</div>
-        <div class="block-title">4. ¿Cómo vale un acuerdo?</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <ul>
-          <li>Un acuerdo solo vale si está <strong>escrito en la tarjeta de acuerdo</strong>.</li>
-          <li>La tarjeta debe decir: qué da un grupo, qué da el otro, y llevar la <strong>firma de ambos</strong>.</li>
-          <li>Si no está escrito y firmado, <strong>no tiene validez</strong>.</li>
-        </ul>
-        <div class="note">Las tarjetas de acuerdo ya están impresas. Úsalas para registrar cada intercambio.</div>
-      </div>
-    </div>
-
-    <div class="block b5">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">⚡</div>
-        <div class="block-title">5. ¿Qué puede pasar durante el juego?</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <ul>
-          <li>Pueden aparecer <strong>eventos inesperados</strong> que afectan a los equipos.</li>
-          <li>Algunos eventos <strong>suman fichas</strong>, otros <strong>las quitan</strong>.</li>
-          <li>Cuando ocurra un evento, el moderador lo anunciará y deberán adaptarse.</li>
-        </ul>
-        <div class="note">Los eventos son parte del juego. Mantén la calma y reajusta tu estrategia cuando aparezcan.</div>
-      </div>
-    </div>
-
-    <div class="block b6">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">💡</div>
-        <div class="block-title">6. ¿Qué ayuda a negociar mejor?</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <ul>
-          <li><strong>Escuchar bien</strong> antes de hablar.</li>
-          <li><strong>Pensar antes de negociar</strong>: ¿qué necesitas realmente? ¿qué puedes ofrecer?</li>
-          <li>Ofrecer algo que le <strong>sirva al otro equipo</strong>, no solo lo que te sobra.</li>
-          <li>Cuidar tus recursos más valiosos — no todo debe entregarse rápido.</li>
-          <li>Buscar acuerdos donde <strong>ambos ganen</strong>.</li>
-          <li>Pensar no solo en tu proyecto, sino en <strong>algo más grande</strong>.</li>
-        </ul>
-        <div class="note">Una buena negociación abre alianzas. Una mala puede dejarte sin fuerza justo cuando más la necesitas.</div>
-      </div>
-    </div>
-
-    <!-- PARTE 2 -->
-    <div class="section-label top-gap">Parte 2 · Fases del taller</div>
-
-    <div class="block f1">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">🗂️</div>
-        <div class="block-title">Fase de preparación</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <div class="timeline">
-          <div class="step step-prep">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 1 · Lectura y conteo</span><span class="step-time">4 min</span></div>
-            <div class="step-desc">Revisa tu caso, tus fichas, lo que te falta y lo que puedes mover.</div>
-          </div>
-        </div>
-        <div class="note">No salgas a negociar sin tener claro qué tienes y qué necesitas. Este momento define tu estrategia.</div>
-      </div>
-    </div>
-
-    <div class="block f2">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">🔄</div>
-        <div class="block-title">Primera y segunda ronda</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <div class="timeline">
-          <div class="step step-neg">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 2 · Primera ronda de negociación</span><span class="step-time">8 min</span></div>
-            <div class="step-desc">Sal a negociar, haz acuerdos, consigue fichas.</div>
-          </div>
-          <div class="step step-eval">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 3 · Evaluación de estrategias</span><span class="step-time">3 min</span></div>
-            <div class="step-desc">Revisa con tu equipo qué funcionó y qué ajustar.</div>
-          </div>
-          <div class="step step-neg">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 4 · Segunda ronda de negociación</span><span class="step-time">6 min</span></div>
-            <div class="step-desc">Aplica lo aprendido, busca nuevos acuerdos.</div>
-          </div>
-          <div class="step step-eval">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 5 · Evaluación de estrategias</span><span class="step-time">2 min</span></div>
-            <div class="step-desc">¿Qué cambió? ¿Qué sigue siendo un obstáculo?</div>
-          </div>
-        </div>
-        <div class="note">Cada pausa de evaluación es clave — no la omitas. Es donde tu equipo decide cómo seguir.</div>
-      </div>
-    </div>
-
-    <div class="block f3">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">🔁</div>
-        <div class="block-title">Tercera ronda</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <div class="timeline">
-          <div class="step step-neg">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 7 · Tercera ronda de negociación</span><span class="step-time">5 min</span></div>
-            <div class="step-desc">Ronda de ajuste — corrige, completa, cierra pendientes.</div>
-          </div>
-          <div class="step step-eval">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 8 · Evaluación de estrategias</span><span class="step-time">2 min</span></div>
-            <div class="step-desc">¿Qué tan cerca estás de la meta? ¿Qué le falta al conjunto?</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="block f4">
-      <div class="block-header" onclick="toggle(this)">
-        <div class="icon">🏁</div>
-        <div class="block-title">Cuarta ronda y cierre</div>
-        <div class="chevron">▶</div>
-      </div>
-      <div class="block-body">
-        <div class="timeline">
-          <div class="step step-neg">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 9 · Cuarta ronda de negociación</span><span class="step-time">4 min</span></div>
-            <div class="step-desc">Última oportunidad para cerrar acuerdos y completar fichas.</div>
-          </div>
-          <div class="step step-cierre">
-            <div class="step-dot"></div>
-            <div class="step-row"><span class="step-name">Paso 11 · Cierre</span><span class="step-time">—</span></div>
-            <div class="step-desc">Se revela el resultado de todos los equipos y el objetivo final.</div>
-          </div>
-        </div>
-        <div class="note">En el cierre se descubre si el resultado es individual o colectivo. Prepárate para reflexionar sobre cómo negociaste.</div>
-      </div>
-    </div>
-
-    <div class="total-bar">
-      <span class="total-label">Tiempo total estimado del taller</span>
-      <span class="total-val">≈ 34 minutos + cierre</span>
-    </div>
-
   </div>
 
-  <script src="script.js"></script>
+  <!-- ── Contenido principal (oculto hasta validar) ── -->
+  <div id="contenido-principal" class="hidden">
+
+    <div class="wrap">
+
+      <div class="header">
+        <img src="LogoCresioPng.png" alt="Logo" class="logo" onerror="this.style.display='none'" />
+        <div class="header-tag">Taller colaborativo</div>
+        <h1>Guía completa del juego<br>de negociación</h1>
+        <p>Todo lo que necesitas saber — toca cada sección para expandirla</p>
+      </div>
+
+      <!-- PARTE 1 -->
+      <div class="section-label">Parte 1 · Lo que debes saber</div>
+
+      <div class="block b1">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">📋</div>
+          <div class="block-title">1. ¿Qué vas a hacer?</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <ul>
+            <li>Trabajas en equipo. Cada equipo tiene <strong>un proyecto propio</strong>.</li>
+            <li>Tu proyecto necesita <strong>fichas específicas</strong> para completarse.</li>
+            <li>Tu misión es <strong>negociar bien</strong> para conseguir las fichas que te faltan.</li>
+          </ul>
+          <div class="note">Antes de salir a negociar, revisa bien tu hoja: qué proyecto tienes, qué fichas tienes, cuáles te faltan y cuáles podrías ofrecer.</div>
+        </div>
+      </div>
+
+      <div class="block b2">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">🎯</div>
+          <div class="block-title">2. ¿Cuál es la meta de tu equipo?</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <ul>
+            <li>Juntar el número de fichas correctas que tu equipo necesita.</li>
+            <li>Según cuántas fichas correctas tengas, puedes pedir:</li>
+          </ul>
+          <div class="badge-row">
+            <span class="badge badge-amber">Confianza — etapa intermedia</span>
+            <span class="badge badge-green">Aprobación — proyecto ejecutado</span>
+          </div>
+          <div class="note">Tu equipo sabe internamente cuántas fichas necesita para cada nivel. No se lo digas a otros grupos si no es necesario.</div>
+        </div>
+      </div>
+
+      <div class="block b3">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">⚙️</div>
+          <div class="block-title">3. ¿Cómo se juega?</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <ul>
+            <li>Solo <strong>2 personas por equipo</strong> pueden salir a negociar con otros grupos.</li>
+            <li>Los demás se quedan en la mesa analizando: qué falta, qué conviene ofrecer, qué cuidar.</li>
+            <li>Pueden cambiar fichas, hacer acuerdos con uno o más equipos, rechazar propuestas y volver a negociar.</li>
+            <li><strong>No se puede</strong> quitar fichas sin acuerdo, ni reunir a todos los grupos a la vez.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block b4">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">✍️</div>
+          <div class="block-title">4. ¿Cómo vale un acuerdo?</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <ul>
+            <li>Un acuerdo solo vale si está <strong>escrito en la tarjeta de acuerdo</strong>.</li>
+            <li>La tarjeta debe decir: qué da un grupo, qué da el otro, y llevar la <strong>firma de ambos</strong>.</li>
+            <li>Si no está escrito y firmado, <strong>no tiene validez</strong>.</li>
+          </ul>
+          <div class="note">Las tarjetas de acuerdo ya están impresas. Úsalas para registrar cada intercambio.</div>
+        </div>
+      </div>
+
+      <div class="block b5">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">⚡</div>
+          <div class="block-title">5. ¿Qué puede pasar durante el juego?</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <ul>
+            <li>Pueden aparecer <strong>eventos inesperados</strong> que afectan a los equipos.</li>
+            <li>Algunos eventos <strong>suman fichas</strong>, otros <strong>las quitan</strong>.</li>
+            <li>Cuando ocurra un evento, el moderador lo anunciará y deberán adaptarse.</li>
+          </ul>
+          <div class="note">Los eventos son parte del juego. Mantén la calma y reajusta tu estrategia cuando aparezcan.</div>
+        </div>
+      </div>
+
+      <div class="block b6">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">💡</div>
+          <div class="block-title">6. ¿Qué ayuda a negociar mejor?</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <ul>
+            <li><strong>Escuchar bien</strong> antes de hablar.</li>
+            <li><strong>Pensar antes de negociar</strong>: ¿qué necesitas realmente? ¿qué puedes ofrecer?</li>
+            <li>Ofrecer algo que le <strong>sirva al otro equipo</strong>, no solo lo que te sobra.</li>
+            <li>Cuidar tus recursos más valiosos — no todo debe entregarse rápido.</li>
+            <li>Buscar acuerdos donde <strong>ambos ganen</strong>.</li>
+            <li>Pensar no solo en tu proyecto, sino en <strong>algo más grande</strong>.</li>
+          </ul>
+          <div class="note">Una buena negociación abre alianzas. Una mala puede dejarte sin fuerza justo cuando más la necesitas.</div>
+        </div>
+      </div>
+
+      <!-- PARTE 2 -->
+      <div class="section-label top-gap">Parte 2 · Fases del taller</div>
+
+      <div class="block f1">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">🗂️</div>
+          <div class="block-title">Fase de preparación</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <div class="timeline">
+            <div class="step step-prep">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 1 · Lectura y conteo</span><span class="step-time">4 min</span></div>
+              <div class="step-desc">Revisa tu caso, tus fichas, lo que te falta y lo que puedes mover.</div>
+            </div>
+          </div>
+          <div class="note">No salgas a negociar sin tener claro qué tienes y qué necesitas. Este momento define tu estrategia.</div>
+        </div>
+      </div>
+
+      <div class="block f2">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">🔄</div>
+          <div class="block-title">Primera y segunda ronda</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <div class="timeline">
+            <div class="step step-neg">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 2 · Primera ronda de negociación</span><span class="step-time">8 min</span></div>
+              <div class="step-desc">Sal a negociar, haz acuerdos, consigue fichas.</div>
+            </div>
+            <div class="step step-eval">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 3 · Evaluación de estrategias</span><span class="step-time">3 min</span></div>
+              <div class="step-desc">Revisa con tu equipo qué funcionó y qué ajustar.</div>
+            </div>
+            <div class="step step-neg">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 4 · Segunda ronda de negociación</span><span class="step-time">6 min</span></div>
+              <div class="step-desc">Aplica lo aprendido, busca nuevos acuerdos.</div>
+            </div>
+            <div class="step step-eval">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 5 · Evaluación de estrategias</span><span class="step-time">2 min</span></div>
+              <div class="step-desc">¿Qué cambió? ¿Qué sigue siendo un obstáculo?</div>
+            </div>
+          </div>
+          <div class="note">Cada pausa de evaluación es clave — no la omitas. Es donde tu equipo decide cómo seguir.</div>
+        </div>
+      </div>
+
+      <div class="block f3">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">🔁</div>
+          <div class="block-title">Tercera ronda</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <div class="timeline">
+            <div class="step step-neg">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 7 · Tercera ronda de negociación</span><span class="step-time">5 min</span></div>
+              <div class="step-desc">Ronda de ajuste — corrige, completa, cierra pendientes.</div>
+            </div>
+            <div class="step step-eval">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 8 · Evaluación de estrategias</span><span class="step-time">2 min</span></div>
+              <div class="step-desc">¿Qué tan cerca estás de la meta? ¿Qué le falta al conjunto?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="block f4">
+        <div class="block-header" onclick="toggle(this)">
+          <div class="icon">🏁</div>
+          <div class="block-title">Cuarta ronda y cierre</div>
+          <div class="chevron">▶</div>
+        </div>
+        <div class="block-body">
+          <div class="timeline">
+            <div class="step step-neg">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 9 · Cuarta ronda de negociación</span><span class="step-time">4 min</span></div>
+              <div class="step-desc">Última oportunidad para cerrar acuerdos y completar fichas.</div>
+            </div>
+            <div class="step step-cierre">
+              <div class="step-dot"></div>
+              <div class="step-row"><span class="step-name">Paso 11 · Cierre</span><span class="step-time">—</span></div>
+              <div class="step-desc">Se revela el resultado de todos los equipos y el objetivo final.</div>
+            </div>
+          </div>
+          <div class="note">En el cierre se descubre si el resultado es individual o colectivo. Prepárate para reflexionar sobre cómo negociaste.</div>
+        </div>
+      </div>
+
+      <div class="total-bar">
+        <span class="total-label">Tiempo total estimado del taller</span>
+        <span class="total-val">≈ 34 minutos + cierre</span>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Clave de acceso — cámbiala por la que tú elijas ──
+    const CLAVE_ACCESO = "cresio2026";
+
+    // Verificar si ya hay sesión activa en esta pestaña
+    if (sessionStorage.getItem('taller_acceso') === 'ok') {
+      mostrarContenido();
+    }
+
+    function verificarAcceso() {
+      const val = document.getElementById('acceso-pwd').value;
+      if (val === CLAVE_ACCESO) {
+        sessionStorage.setItem('taller_acceso', 'ok');
+        mostrarContenido();
+      } else {
+        document.getElementById('acceso-error').classList.remove('hidden');
+        document.getElementById('acceso-pwd').value = '';
+        document.getElementById('acceso-pwd').focus();
+      }
+    }
+
+    function mostrarContenido() {
+      document.getElementById('acceso-screen').classList.add('hidden');
+      document.getElementById('contenido-principal').classList.remove('hidden');
+    }
+
+    function toggle(header) {
+      const body    = header.nextElementSibling;
+      const chevron = header.querySelector('.chevron');
+      const isOpen  = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      chevron.classList.toggle('open', !isOpen);
+    }
+  </script>
+
 </body>
 </html>
