@@ -19,17 +19,17 @@
       <input type="password" id="acceso-pwd" placeholder="Clave de acceso"
              onkeydown="if(event.key==='Enter') verificarAcceso()" />
       <button onclick="verificarAcceso()">Ingresar</button>
-      <div id="acceso-error" class="acceso-error hidden">Clave incorrecta. Inténtalo de nuevo.</div>
+      <div id="acceso-error" class="acceso-error">Clave incorrecta. Inténtalo de nuevo.</div>
     </div>
   </div>
 
-  <!-- ── Contenido principal (oculto hasta validar) ── -->
-  <div id="contenido-principal" class="hidden">
+  <!-- ── Contenido principal ── -->
+  <div id="contenido-principal">
 
     <div class="wrap">
 
       <div class="header">
-        <img src="LogoCresioPng.png" alt="Logo" class="logo" onerror="this.style.display='none'" />
+        <img src="LogoCresioPng.png" alt="Logo" class="logo" />
         <div class="header-tag">Taller colaborativo</div>
         <h1>Guía completa del juego<br>de negociación</h1>
         <p>Todo lo que necesitas saber — toca cada sección para expandirla</p>
@@ -248,8 +248,12 @@
   </div>
 
   <script>
-    // ── Clave de acceso — cámbiala por la que tú elijas ──
-    const CLAVE_ACCESO = "cresio2026";
+    // ── Cambia esta clave por la que tú elijas ──
+    const CLAVE_ACCESO = "cresio2025";
+
+    const pantallaAcceso   = document.getElementById('acceso-screen');
+    const contenido        = document.getElementById('contenido-principal');
+    const errorMsg         = document.getElementById('acceso-error');
 
     // Verificar si ya hay sesión activa en esta pestaña
     if (sessionStorage.getItem('taller_acceso') === 'ok') {
@@ -262,15 +266,15 @@
         sessionStorage.setItem('taller_acceso', 'ok');
         mostrarContenido();
       } else {
-        document.getElementById('acceso-error').classList.remove('hidden');
+        errorMsg.classList.add('visible');
         document.getElementById('acceso-pwd').value = '';
         document.getElementById('acceso-pwd').focus();
       }
     }
 
     function mostrarContenido() {
-      document.getElementById('acceso-screen').classList.add('hidden');
-      document.getElementById('contenido-principal').classList.remove('hidden');
+      pantallaAcceso.classList.add('oculto');
+      contenido.classList.add('visible');
     }
 
     function toggle(header) {
