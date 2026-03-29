@@ -4,13 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mis apuntes del taller — Cresio</title>
-
-  <!-- CRÍTICO: ocultar el contenido ANTES de que cargue cualquier CSS externo -->
-  <style>
-    #contenido-principal { display: none !important; }
-    #acceso-screen { display: flex; }
-  </style>
-
   <link rel="stylesheet" href="apuntes-style.css" />
 </head>
 <body>
@@ -30,8 +23,8 @@
     </div>
   </div>
 
-  <!-- ── Contenido principal ── -->
-  <div id="contenido-principal">
+  <!-- ── Contenido principal — oculto con atributo style directo ── -->
+  <div id="contenido-principal" style="display:none">
 
     <div class="wrap">
 
@@ -179,7 +172,6 @@
   </div>
   <canvas id="camara-canvas" style="display:none"></canvas>
 
-  <!-- Acceso — script normal (no module) para ejecutarse inmediatamente -->
   <script>
     const CLAVE_ACCESO   = "cresio2025";
     const pantallaAcceso = document.getElementById('acceso-screen');
@@ -199,17 +191,15 @@
     }
 
     function mostrarContenido() {
-      pantallaAcceso.style.display  = 'none';
-      contenido.style.display       = 'block';
+      pantallaAcceso.style.setProperty('display', 'none', 'important');
+      contenido.style.setProperty('display', 'block', 'important');
     }
 
-    // Si ya hay sesión activa mostrar contenido directamente
     if (sessionStorage.getItem('taller_acceso') === 'ok') {
       mostrarContenido();
     }
   </script>
 
-  <!-- Firebase y funcionalidad — module -->
   <script type="module">
     import { initializeApp }                                          from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp }     from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
